@@ -1,3 +1,3 @@
-import Cat from './cat.js';
-import Dog from './dog.js';
-export { Dog, Cat };
+import {createStore} from 'jeux';
+console.log(createStore);
+export {};
