@@ -18,6 +18,10 @@ if (env === 'build') {
 }
 
 const config = {
+  externals: {
+    react: 'react',
+    jeux: 'jeux'
+  },
   mode: mode,
   entry: __dirname + '/src/index.js',
   devtool: 'source-map',
