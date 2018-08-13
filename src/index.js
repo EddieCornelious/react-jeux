@@ -1,5 +1,5 @@
 
-import React from 'react';
+import { Component, createElement } from 'react';
 
 function defaultMapStateToProps() {
   return {};
@@ -43,7 +43,7 @@ export function connect(mapStateToProps = defaultMapStateToProps, mapDispatchToP
     const stateMapperDependsOnProps = mapStateToProps.length > 1;
     const dispatchMapperDependsOnProps = mapDispatchToProps.length > 1;
 
-    return class WrapperComponent extends React.Component {
+    return class WrapperComponent extends Component {
 
       constructor(props) {
         super(props);
@@ -108,7 +108,7 @@ export function connect(mapStateToProps = defaultMapStateToProps, mapDispatchToP
         let dispatchMapperChanged = false;
 
         if (this.firstCycle) {
-          this.renderedEle = React.createElement(componentToConnectToStore,
+          this.renderedEle = createElement(componentToConnectToStore,
             mergeObjs(this.stateProps, this.dispatchProps, this.props));
           this.firstCycle = false;
           return this.renderedEle;
@@ -124,7 +124,7 @@ export function connect(mapStateToProps = defaultMapStateToProps, mapDispatchToP
         }
 
         if (this.propsChanged || stateMapperChanged || dispatchMapperChanged) {
-          this.renderedEle = React.createElement(componentToConnectToStore,
+          this.renderedEle = createElement(componentToConnectToStore,
             mergeObjs(this.stateProps, this.dispatchProps, this.props));
           return this.renderedEle;
         }
