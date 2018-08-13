@@ -38,7 +38,7 @@ function shallowEqual(objA, objB) {
   return true;
 }
 
-export function connect(mapStateToProps, mapDispatchToProps) {
+export function connect(mapStateToProps = defaultMapStateToProps, mapDispatchToProps = defaultMapDispatchToProps) {
   return function (store, componentToConnectToStore) {
     const stateMapperDependsOnProps = mapStateToProps.length > 1;
     const dispatchMapperDependsOnProps = mapDispatchToProps.length > 1;
@@ -48,8 +48,8 @@ export function connect(mapStateToProps, mapDispatchToProps) {
       constructor(props) {
         super(props);
         this.state = { storeState: store.getState() };
-        this.stateProps = mapStateToProps(this.store.storeState, props) || defaultMapStateToProps;
-        this.dispatchProps = mapDispatchToProps(store.dispatch, props) || defaultMapDispatchToProps;
+        this.stateProps = mapStateToProps(this.store.storeState, props);
+        this.dispatchProps = mapDispatchToProps(store.dispatch, props);
         this.firstCycle = true;
         this.storeChanged = false;
         this.propsChanged = false;
