@@ -48,7 +48,7 @@ export function connect(mapStateToProps = defaultMapStateToProps, mapDispatchToP
       constructor(props) {
         super(props);
         this.state = { storeState: store.getState() };
-        this.stateProps = mapStateToProps(this.store.storeState, props);
+        this.stateProps = mapStateToProps(this.state.storeState, props);
         this.dispatchProps = mapDispatchToProps(store.dispatch, props);
         this.firstCycle = true;
         this.storeChanged = false;
