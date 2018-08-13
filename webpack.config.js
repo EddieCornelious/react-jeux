@@ -28,7 +28,7 @@ const config = {
   output: {
     path: __dirname + '/lib',
     filename: outputFile,
-    library: libraryName,
+    library: "reactjeux",
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
