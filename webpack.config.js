@@ -19,7 +19,7 @@ if (env === 'build') {
 
 const config = {
   externals: {
-    react: 'react',
+    "React": 'React',
     jeux: 'jeux'
   },
   mode: mode,
