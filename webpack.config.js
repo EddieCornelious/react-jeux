@@ -19,8 +19,12 @@ if (env === 'build') {
 
 const config = {
   externals: {
-    "React": 'React',
-    jeux: 'jeux'
+    react : {
+      commonjs: 'react',
+      amd: 'react',
+      root: 'React',
+      commonjs2: 'react'
+    }
   },
   mode: mode,
   entry: __dirname + '/src/index.js',
