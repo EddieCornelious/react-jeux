@@ -13,7 +13,7 @@ function mergeObjs(state, dispatch, props) {
   return Object.assign({}, state, dispatch, props);
 }
 
-function shallowEqual(objA, objB) {
+function shallowEqual(objA = {}, objB = {}) {
   if (objA === objB) {
     return true;
   }
@@ -29,8 +29,7 @@ function shallowEqual(objA, objB) {
   const hasOwn = Object.prototype.hasOwnProperty;
 
   for (let i = 0; i < keysA.length; i++) {
-    if (!hasOwn.call(objB, keysA[i]) ||
-        objA[keysA[i]] !== objB[keysA[i]]) {
+    if (!hasOwn.call(objB, keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
       return false;
     }
   }
@@ -38,13 +37,15 @@ function shallowEqual(objA, objB) {
   return true;
 }
 
-export function connect(mapStateToProps = defaultMapStateToProps, mapDispatchToProps = defaultMapDispatchToProps) {
+export function connect(
+  mapStateToProps = defaultMapStateToProps,
+  mapDispatchToProps = defaultMapDispatchToProps
+) {
   return function (store, componentToConnectToStore) {
     const stateMapperDependsOnProps = mapStateToProps.length > 1;
     const dispatchMapperDependsOnProps = mapDispatchToProps.length > 1;
 
     return class WrapperComponent extends Component {
-
       constructor(props) {
         super(props);
         this.state = { storeState: store.getState() };
@@ -54,6 +55,7 @@ export function connect(mapStateToProps = defaultMapStateToProps, mapDispatchToP
         this.storeChanged = false;
         this.propsChanged = false;
         this.propsBeforeRender = props;
+        this.renderedEle = null;
       }
 
       componentDidMount() {
@@ -61,9 +63,15 @@ export function connect(mapStateToProps = defaultMapStateToProps, mapDispatchToP
       }
 
       initSubscribe() {
-        this.unsubscribe = newState => this.setState({
-          storeState: newState
-        });
+        const ctx = this;
+
+        if (!this.unsubscribe) {
+          this.unsubscribe = store.subscribe(newState =>
+            ctx.setState({
+              storeState: newState
+            })
+          );
+        }
       }
 
       componentWillUnMount() {
@@ -88,14 +96,16 @@ export function connect(mapStateToProps = defaultMapStateToProps, mapDispatchToP
       }
 
       componentWillReceiveProps(nextProps) {
-        this.propsChanged = !shallowEqual(nextProps, this.propsBeforeRender);
-
+        this.propsChanged = !shallowEqual(nextProps, this.props);
       }
 
       updateDispatchProps() {
-        const nextDispatchProps = mapDispatchToProps(store.getState(), this.props);
+        const nextDispatchProps = mapDispatchToProps(
+          store.getState(),
+          this.props
+        );
 
-        if (shallowEqual(nextDispatchProps, this.stateProps)) {
+        if (shallowEqual(nextDispatchProps, this.dispatchProps)) {
           return false;
         }
 
@@ -108,14 +118,20 @@ export function connect(mapStateToProps = defaultMapStateToProps, mapDispatchToP
         let dispatchMapperChanged = false;
 
         if (this.firstCycle) {
-          this.renderedEle = createElement(componentToConnectToStore,
-            mergeObjs(this.stateProps, this.dispatchProps, this.props));
+          this.renderedEle = createElement(
+            componentToConnectToStore,
+            mergeObjs(this.stateProps, this.dispatchProps, this.props)
+          );
           this.firstCycle = false;
           return this.renderedEle;
         }
+
         this.propsChanged = !shallowEqual(this.propsBeforeRender, this.props);
 
-        if (this.storeChanged || (this.propsChanged && stateMapperDependsOnProps)) {
+        if (
+          this.storeChanged ||
+          (this.propsChanged && stateMapperDependsOnProps)
+        ) {
           stateMapperChanged = this.updateStateProps();
         }
 
@@ -124,10 +140,14 @@ export function connect(mapStateToProps = defaultMapStateToProps, mapDispatchToP
         }
 
         if (this.propsChanged || stateMapperChanged || dispatchMapperChanged) {
-          this.renderedEle = createElement(componentToConnectToStore,
-            mergeObjs(this.stateProps, this.dispatchProps, this.props));
+          this.renderedEle = createElement(
+            componentToConnectToStore,
+            mergeObjs(this.stateProps, this.dispatchProps, this.props)
+          );
+
           return this.renderedEle;
         }
+
         return this.renderedEle;
       }
     };
