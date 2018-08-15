@@ -7,7 +7,8 @@
     "build": "rimraf -rf lib .nyc_output && webpack --env dev && webpack --env build && npm run test",
     "dev": "webpack --progress --colors --watch --env dev",
     "test": "node_modules/.bin/nyc mocha --require babel-register --colors ./test/*.spec.js",
-    "test:watch": "mocha --require babel-register --colors -w ./test/*.spec.js"
+    "test:watch": "mocha --require babel-register --colors -w ./test/*.spec.js",
+    "pretty" : "node_modules/.bin/prettier --single-quote --write ./test/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -39,6 +40,7 @@
     "jsdom-global": "3.0.2",
     "mocha": "^4.0.1",
     "nyc": "^12.0.2",
+    "prettier": "1.14.2",
     "react": "^16.4.2",
     "react-dom": "^16.3.2",
     "rimraf": "^2.6.2",
