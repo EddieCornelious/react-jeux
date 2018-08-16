@@ -14,7 +14,6 @@ chai.expect();
 
 const expect = chai.expect;
 
-
 function counterReducer(state = 0, action) {
   if (action.type === 'INC') {
     return state + 1;
@@ -28,9 +27,6 @@ function counterReducer(state = 0, action) {
 const reducers = {
   counter: counterReducer
 };
-
-
-
 
 function Display(props) {
   return <h2>{props.max}</h2>;
@@ -55,7 +51,6 @@ class Counter extends Component {
 
   handleClick() {
     this.props.updateCounter('INC');
-    
   }
 
   handleToggle() {
@@ -77,13 +72,13 @@ class Counter extends Component {
   }
 }
 let store;
-beforeEach(()=>{
-store = createStore(reducers);
-})
+beforeEach(() => {
+  store = createStore(reducers);
+});
 
-afterEach(()=>{
+afterEach(() => {
   store = null;
-})
+});
 
 describe('connect', () => {
   it('displays the connected component properly', () => {
@@ -93,9 +88,9 @@ describe('connect', () => {
     )(store, Counter);
     let component = mount(<Connected />);
     expect(component.html()).to.equal('<div><h1>0</h1><h2>0</h2></div>');
-    component.unmount()
+    component.unmount();
   });
-  
+
   it('gives default mapping functions when none given', () => {
     let Connected = connect(
       undefined,
@@ -103,9 +98,9 @@ describe('connect', () => {
     )(store, Counter);
     let component = mount(<Connected />);
     expect(component.html()).to.equal('<div><h1></h1><h2></h2></div>');
-    component.unmount()
+    component.unmount();
   });
-  
+
   it('updates connected componenet and children properly', () => {
     let Connected = connect(
       mapStateToProps,
@@ -114,9 +109,79 @@ describe('connect', () => {
     let component = mount(<Connected />);
     component.find('h1').simulate('click');
     expect(component.html()).to.equal('<div><h1>1</h1><h2>1</h2></div>');
-      component.find('h1').simulate('click');
+    component.find('h1').simulate('click');
     expect(component.html()).to.equal('<div><h1>2</h1><h2>2</h2></div>');
-    component.unmount()
+    component.unmount();
   });
-  
+
+  it('updates dispatch to props when the return value is different based on own props', () => {
+    function map(dispatch, ownProps) {
+      if (ownProps.id === 'lol') {
+        return {
+          updateCounter: type => dispatch({ type: 'INC' })
+        };
+      }
+      return {
+        updateCounter: type => dispatch({ type: 'DEC' })
+      };
+    }
+    let Connected = connect(
+      mapStateToProps,
+      map
+    )(store, Counter);
+    let component = mount(<Connected id="lol" />);
+    component.find('h1').simulate('click');
+    expect(component.html()).to.equal('<div><h1>1</h1><h2>1</h2></div>');
+    component.setProps({ id: 'bar' });
+    component.find('h1').simulate('click');
+    expect(component.html()).to.equal('<div><h1>0</h1><h2>0</h2></div>');
+    component.unmount();
+  });
+
+  it('renders the cached element when no props or state, map dis to props or map state to props change (verified by code coverage)', () => {
+    function map(dispatch, ownProps) {
+      const sameObj = {
+        updateCounter: type => dispatch({ type: 'INCo' })
+      };
+      if (ownProps.id === 'lol') {
+        return {
+          updateCounter: type => dispatch({ type: 'INCo' })
+        };
+      }
+      return {
+        updateCounter: type => dispatch({ type: 'DEC0' })
+      };
+    }
+    let Connected = connect(
+      mapStateToProps,
+      map
+    )(store, Counter);
+    let component = mount(<Connected id="lol" />);
+    component.find('h1').simulate('click');
+    expect(component.html()).to.equal('<div><h1>0</h1><h2>0</h2></div>');
+    component.unmount();
+  });
+
+  it('dispatch props does update when new props are added to component (code coverage)', () => {
+    function map(dispatch, ownProps) {
+      const sameObj = {
+        updateCounter: type => dispatch({ type: 'INC' })
+      };
+      if (ownProps.id === 'lol') {
+        return sameObj;
+      }
+      return sameObj;
+    }
+    let Connected = connect(
+      mapStateToProps,
+      map
+    )(store, Counter);
+    let component = mount(<Connected id="lol" />);
+    component.find('h1').simulate('click');
+    expect(component.html()).to.equal('<div><h1>1</h1><h2>1</h2></div>');
+    component.setProps({ other: 'bar' });
+    component.find('h1').simulate('click');
+    expect(component.html()).to.equal('<div><h1>2</h1><h2>2</h2></div>');
+    component.unmount();
+  });
 });
