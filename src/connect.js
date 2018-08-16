@@ -30,11 +30,11 @@ export default function connect(
       }
 
       initSubscribe() {
-        const ctx = this;
+        const self = this;
 
-        if (!this.unsubscribe) {
-          this.unsubscribe = store.subscribe(newState =>
-            ctx.setState({
+        if (!self.unsubscribe) {
+          self.unsubscribe = store.subscribe(newState =>
+            self.setState({
               storeState: newState
             })
           );
