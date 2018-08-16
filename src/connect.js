@@ -68,7 +68,7 @@ export default function connect(
 
       updateDispatchProps() {
         const nextDispatchProps = mapDispatchToProps(
-          store.getState(),
+          store.dispatch,
           this.props
         );
 
