@@ -1,6 +1,6 @@
 {
   "name": "react-jeux",
-  "version": "0.0.0",
+  "version": "0.2.0",
   "description": "React bindings for jeux ",
   "main": "lib/react-jeux.js",
   "scripts": {
