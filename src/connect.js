@@ -41,7 +41,7 @@ export default function connect(
         }
       }
 
-      componentWillUnMount() {
+      componentWillUnmount() {
         this.unsubscribe();
       }
 
