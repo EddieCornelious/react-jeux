@@ -71,6 +71,35 @@ class Counter extends Component {
     );
   }
 }
+
+class CounterNested extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  handleClick() {
+    this.props.updateCounter('INC');
+  }
+
+  handleToggle() {
+    this.props.updateCounter('DEC');
+  }
+
+  render() {
+    return (
+      <div>
+        <h1
+          id={this.props.main ? 'lol' : ''}
+          onToggle={this.handleToggle.bind(this)}
+          onClick={this.handleClick.bind(this)}
+        >
+          {this.props.counter}
+        </h1>
+        {this.props.children}
+      </div>
+    );
+  }
+}
 let store;
 beforeEach(() => {
   store = createStore(reducers);
@@ -162,7 +191,7 @@ describe('connect', () => {
     component.unmount();
   });
 
-  it('dispatch props does update when new props are added to component (code coverage)', () => {
+  it('dispatch to props does update when new props are added to component (code coverage)', () => {
     function map(dispatch, ownProps) {
       const sameObj = {
         updateCounter: type => dispatch({ type: 'INC' })
@@ -182,6 +211,43 @@ describe('connect', () => {
     component.setProps({ other: 'bar' });
     component.find('h1').simulate('click');
     expect(component.html()).to.equal('<div><h1>2</h1><h2>2</h2></div>');
+    component.unmount();
+  });
+
+  it('props are passed to connected components and maintained through multiple renders', () => {
+    let Connected = connect(
+      mapStateToProps,
+      mapDispatchToProps
+    )(store, CounterNested);
+    let component = mount(<Connected name="james" age={22} />);
+    component.find('h1').simulate('click');
+    expect(component.prop('name')).to.equal('james');
+    expect(component.prop('age')).to.equal(22);
+    component.find('h1').simulate('click');
+    expect(component.prop('name')).to.equal('james');
+    expect(component.prop('age')).to.equal(22);
+    component.unmount();
+  });
+
+  it('multiple connected nested components render and update properly', () => {
+    let Connected = connect(
+      mapStateToProps,
+      mapDispatchToProps
+    )(store, CounterNested);
+    let component = mount(
+      <Connected main={true}>
+        <Connected />
+        <Connected />
+      </Connected>
+    );
+    component.find('#lol').simulate('click');
+    expect(component.html()).to.equal(
+      '<div><h1 id="lol">1</h1><div><h1 id="">1</h1></div><div><h1 id="">1</h1></div></div>'
+    );
+    component.find('#lol').simulate('click');
+    expect(component.html()).to.equal(
+      '<div><h1 id="lol">2</h1><div><h1 id="">2</h1></div><div><h1 id="">2</h1></div></div>'
+    );
     component.unmount();
   });
 });
