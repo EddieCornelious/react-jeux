@@ -250,4 +250,147 @@ describe('connect', () => {
     );
     component.unmount();
   });
+
+  it('mapStateToProps passes props correctly to component when alone', () => {
+    let Connected = connect(
+      mapStateToProps,
+      undefined
+    )(store, Counter);
+    let component = mount(<Connected />);
+
+    let componentInstance = component.instance().renderedEle;
+    expect(componentInstance.props.counter).to.be.equal(0);
+    expect(componentInstance.props.dispatch).to.be.a('function');
+    expect(Object.keys(componentInstance.props).length).to.be.equal(2);
+
+    component.unmount();
+  });
+
+  it('mapDispatchToProps passes props correctly to component when alone', () => {
+    let Connected = connect(
+      undefined,
+      mapDispatchToProps
+    )(store, Counter);
+    let component = mount(<Connected />);
+    let componentInstance = component.instance().renderedEle;
+    expect(componentInstance.props.updateCounter).to.be.a('function');
+    expect(Object.keys(componentInstance.props).length).to.be.equal(1);
+
+    component.unmount();
+  });
+
+  it('proper defaults are passed to component when no dispatch to props or map is passed', () => {
+    let Connected = connect(
+      undefined,
+      undefined
+    )(store, Counter);
+    let component = mount(<Connected />);
+    let componentInstance = component.instance().renderedEle;
+    expect(componentInstance.props.dispatch).to.be.a('function');
+    expect(Object.keys(componentInstance.props).length).to.be.equal(1);
+
+    component.unmount();
+  });
+
+  it('should render cached element when no props or state changes', () => {
+    function map(dispatch) {
+      return {
+        updateCounter: () => dispatch({ type: 'NADA' })
+      };
+    }
+    let Connected = connect(
+      mapStateToProps,
+      map
+    )(store, Counter);
+    let component = mount(<Connected />);
+    let initialCache = component.instance().renderedEle;
+    component.find('h1').simulate('click');
+    expect(component.instance().renderedEle === initialCache).to.be.equal(true);
+    component.find('h1').simulate('click');
+    expect(component.instance().renderedEle === initialCache).to.be.equal(true);
+    component.find('h1').simulate('click');
+    expect(component.instance().renderedEle === initialCache).to.be.equal(true);
+
+    component.unmount();
+  });
+
+  it('should not render cached element when state changes', () => {
+    let Connected = connect(
+      mapStateToProps,
+      mapDispatchToProps
+    )(store, Counter);
+    let component = mount(<Connected />);
+    let initialCache = component.instance().renderedEle;
+    expect(component.instance().renderedEle === initialCache).to.be.equal(true);
+    component.find('h1').simulate('click');
+    expect(component.instance().renderedEle === initialCache).to.be.equal(
+      false
+    );
+    initialCache = component.instance().renderedEle;
+    component.find('h1').simulate('click');
+    expect(component.instance().renderedEle === initialCache).to.be.equal(
+      false
+    );
+
+    component.unmount();
+  });
+
+  it('should not render cached element when Ownprops change', () => {
+    let Connected = connect(
+      mapStateToProps,
+      mapDispatchToProps
+    )(store, Counter);
+    let component = mount(<Connected />);
+    let initialCache = component.instance().renderedEle;
+    expect(component.instance().renderedEle === initialCache).to.be.equal(true);
+    component.setProps({ id: 'bar' });
+    expect(component.instance().renderedEle === initialCache).to.be.equal(
+      false
+    );
+
+    component.unmount();
+  });
+
+  it('should not render cached element when props change and no dependency on ownProps in mapdispatchtoprops', () => {
+    function map(dispatch) {
+      return {
+        updateCounter: () => dispatch({ type: 'NADA' })
+      };
+    }
+    let Connected = connect(
+      mapStateToProps,
+      map
+    )(store, Counter);
+    let component = mount(<Connected id="bob" />);
+    let initialCache = component.instance().renderedEle;
+    component.find('h1').simulate('click');
+    component.setProps({ id: 'bar' });
+    expect(component.instance().renderedEle === initialCache).to.be.equal(
+      false
+    );
+
+    component.unmount();
+  });
+
+  it('should not render cached element when props change and no dependency on ownProps in mapdispatchtoprops', () => {
+    function map(dispatch, ownProps) {
+      return {
+        updateCounter: () => dispatch({ type: 'NADA' + ownProps.id })
+      };
+    }
+    let Connected = connect(
+      mapStateToProps,
+      map
+    )(store, Counter);
+    let component = mount(<Connected id="bob" />);
+    let initialCache = component.instance().renderedEle;
+    component.find('h1').simulate('click');
+    component.setProps({ id: 'bar' });
+    component.find('h1').simulate('click');
+    expect(component.instance().renderedEle === initialCache).to.be.equal(
+      false
+    );
+
+    component.unmount();
+  });
 });
