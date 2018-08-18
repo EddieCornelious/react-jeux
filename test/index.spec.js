@@ -393,11 +393,11 @@ describe('connect', () => {
 
     component.unmount();
   });
-  
+
   it('should not invoke dispatchtoprops again if no state change but ownprops change and no dependency on ownprops', () => {
     function map(dispatch) {
       return {
-        updateCounter: () => dispatch({ type: 'NADA'})
+        updateCounter: () => dispatch({ type: 'NADA' })
       };
     }
     let Connected = connect(
@@ -408,60 +408,54 @@ describe('connect', () => {
     let initialDispatchProps = component.instance().dispatchProps;
     component.setProps({ id: 'bar' });
     component.find('h1').simulate('click');
-    expect(initialDispatchProps === component.instance().dispatchProps).to.be.equal(
-      true
-    );
+    expect(
+      initialDispatchProps === component.instance().dispatchProps
+    ).to.be.equal(true);
     component.setProps({ id: 'bak' });
     component.find('h1').simulate('click');
-    expect(initialDispatchProps === component.instance().dispatchProps).to.be.equal(
-      true
-    );
+    expect(
+      initialDispatchProps === component.instance().dispatchProps
+    ).to.be.equal(true);
 
     component.unmount();
   });
-  
-  
+
   it('should invoke dispatchtoprops again if no state change but ownprops change and has dependency on ownprops', () => {
     function map(dispatch, ownProps) {
       return {
-        updateCounter: () => dispatch({ type: 'NADA'+ownProps.id})
+        updateCounter: () => dispatch({ type: 'NADA' + ownProps.id })
       };
     }
     let Connected = connect(
       mapStateToProps,
       map
     )(store, Counter);
-    let component = mount(<Connected id="bob"/>);
+    let component = mount(<Connected id="bob" />);
     let initialDispatchProps = component.instance().dispatchProps;
     component.setProps({ id: 'bar' });
     component.find('h1').simulate('click');
-    expect(initialDispatchProps === component.instance().dispatchProps).to.be.equal(
-      false
-    );
+    expect(
+      initialDispatchProps === component.instance().dispatchProps
+    ).to.be.equal(false);
     initialDispatchProps = component.instance().dispatchProps;
     component.setProps({ id: 'bars' });
     component.find('h1').simulate('click');
-    expect(initialDispatchProps === component.instance().dispatchProps).to.be.equal(
-      false
-    );
-    
- 
+    expect(
+      initialDispatchProps === component.instance().dispatchProps
+    ).to.be.equal(false);
 
     component.unmount();
   });
-  
-  
- 
-  
+
   it('should not invoke mapstatetoprops again if no state change but ownprops change and no dependency on ownprops', () => {
     function map(state) {
       return {
-        counter : state.counter
-      }
+        counter: state.counter
+      };
     }
-    function map2(dispatch ,ownProps) {
+    function map2(dispatch, ownProps) {
       return {
-        updateCounter: () => dispatch({ type: 'NADA'+ownProps.id})
+        updateCounter: () => dispatch({ type: 'NADA' + ownProps.id })
       };
     }
     let Connected = connect(
@@ -483,30 +477,28 @@ describe('connect', () => {
 
     component.unmount();
   });
-  
-  
+
   it('should invoke mapstatetoprops again if no state change but ownprops change and has dependency on ownprops', () => {
     function map2(dispatch, ownProps) {
       return {
-        updateCounter: () => dispatch({ type: 'NADA'+ownProps.id})
+        updateCounter: () => dispatch({ type: 'NADA' + ownProps.id })
       };
     }
     function map(state, ownProps) {
-      if(ownProps.id === "bar"){
+      if (ownProps.id === 'bar') {
         return {
-        counter : state.counter + ownProps.id
-      }
+          counter: state.counter + ownProps.id
+        };
       }
       return {
-        counter : state.counter
-      }
-      
+        counter: state.counter
+      };
     }
     let Connected = connect(
       map,
       map2
     )(store, Counter);
-    let component = mount(<Connected id="bob"/>);
+    let component = mount(<Connected id="bob" />);
     let initialStateProps = component.instance().stateProps;
     component.setProps({ id: 'bar' });
     component.find('h1').simulate('click');
@@ -519,29 +511,26 @@ describe('connect', () => {
     expect(initialStateProps === component.instance().stateProps).to.be.equal(
       false
     );
-    
+
     component.unmount();
   });
-  
-  
+
   it('should not invoke mapstatetoprops again if no state change but ownprops change and has dependency on ownprops', () => {
     function map2(dispatch, ownProps) {
       return {
-        updateCounter: () => dispatch({ type: 'NADA'+ownProps.id})
+        updateCounter: () => dispatch({ type: 'NADA' + ownProps.id })
       };
     }
     function map(state, ownProps) {
-      
       return {
-        counter : state.counter
-      }
-      
+        counter: state.counter
+      };
     }
     let Connected = connect(
       map,
       map2
     )(store, Counter);
-    let component = mount(<Connected id="bob"/>);
+    let component = mount(<Connected id="bob" />);
     let initialStateProps = component.instance().stateProps;
     component.setProps({ id: 'bar' });
     component.find('h1').simulate('click');
@@ -554,7 +543,7 @@ describe('connect', () => {
     expect(initialStateProps === component.instance().stateProps).to.be.equal(
       true
     );
-    
+
     component.unmount();
   });
 });
