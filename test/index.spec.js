@@ -221,11 +221,70 @@ describe('connect', () => {
     )(store, CounterNested);
     let component = mount(<Connected name="james" age={22} />);
     component.find('h1').simulate('click');
-    expect(component.prop('name')).to.equal('james');
-    expect(component.prop('age')).to.equal(22);
+    expect(component.instance().renderedEle.props.name).to.equal('james');
+    expect(component.instance().renderedEle.props.age).to.equal(22);
     component.find('h1').simulate('click');
-    expect(component.prop('name')).to.equal('james');
-    expect(component.prop('age')).to.equal(22);
+    expect(component.instance().renderedEle.props.name).to.equal('james');
+    expect(component.instance().renderedEle.props.age).to.equal(22);
+    component.unmount();
+  });
+
+  it('props are passed to connected components and maintained through multiple renders (2)', () => {
+    let Connected = connect(
+      mapStateToProps,
+      mapDispatchToProps
+    )(store, CounterNested);
+    let component = mount(<Connected name="james" age={22} />);
+    component.find('h1').simulate('click');
+    expect(component.instance().renderedEle.props.name).to.equal('james');
+    expect(component.instance().renderedEle.props.age).to.equal(22);
+    component.setProps({ name: 'cody', age: 12 });
+    component.find('h1').simulate('click');
+    expect(component.instance().renderedEle.props.name).to.equal('cody');
+    expect(component.instance().renderedEle.props.age).to.equal(12);
+    component.unmount();
+  });
+
+  it('props are passed to connected components and maintained through multiple renders (3)', () => {
+    let Connected = connect(
+      mapStateToProps,
+      mapDispatchToProps
+    )(store, CounterNested);
+    let component = mount(<Connected name="james" age={22} />);
+    expect(component.instance().renderedEle.props.name).to.equal('james');
+    expect(component.instance().renderedEle.props.age).to.equal(22);
+    component.setProps({ name: 'cody' });
+    expect(component.instance().renderedEle.props.name).to.equal('cody');
+    expect(component.instance().renderedEle.props.age).to.equal(22);
+    component.unmount();
+  });
+
+  it('props are passed to connected components and maintained through multiple renders (4)', () => {
+    let Connected = connect(
+      mapStateToProps,
+      mapDispatchToProps
+    )(store, CounterNested);
+    let component = mount(<Connected name="james" age={22} />);
+    expect(component.instance().renderedEle.props.name).to.equal('james');
+    expect(component.instance().renderedEle.props.age).to.equal(22);
+    component.setProps({ name: 'cody', age: 77 });
+    expect(component.instance().renderedEle.props.name).to.equal('cody');
+    expect(component.instance().renderedEle.props.age).to.equal(77);
+    component.unmount();
+  });
+
+  it('props are passed to connected components and maintained through multiple renders (5)', () => {
+    let Connected = connect(
+      mapStateToProps,
+      mapDispatchToProps
+    )(store, CounterNested);
+    let component = mount(<Connected name="james" age={22} />);
+    component.setProps({ name: 'cody', age: 77 });
+    expect(component.instance().renderedEle.props.name).to.equal('cody');
+    expect(component.instance().renderedEle.props.age).to.equal(77);
+    component.setProps({ name: 'cain', age: 43 });
+    expect(component.instance().renderedEle.props.name).to.equal('cain');
+    expect(component.instance().renderedEle.props.age).to.equal(43);
     component.unmount();
   });
 
