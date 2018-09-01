@@ -1,6 +1,6 @@
 {
   "name": "react-jeux",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "React bindings for jeux ",
   "main": "lib/react-jeux.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "dev": "webpack --progress --colors --watch --env dev",
     "test": "node_modules/.bin/nyc mocha --require babel-register --colors ./test/*.spec.js",
     "test:watch": "mocha --require babel-register --colors -w ./test/*.spec.js",
-    "pretty": "node_modules/.bin/prettier --single-quote --write ./test/*.spec.js"
+    "pretty": "node_modules/.bin/prettier --write ./test/*.spec.js && node_modules/.bin/prettier --write ./src/*"
   },
   "repository": {
     "type": "git",
@@ -39,7 +39,7 @@
     "enzyme-adapter-react-16": "^1.2.0",
     "eslint": "^4.19.1",
     "eslint-loader": "^2.0.0",
-    "jeux": "^0.1.0",
+    "jeux": "^0.4.0",
     "jsdom": "11.11.0",
     "jsdom-global": "3.0.2",
     "mocha": "^4.0.1",
