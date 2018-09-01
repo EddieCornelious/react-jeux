@@ -1,3 +1,5 @@
+const staticObj = {};
+
 export default function defaultMapStateToProps() {
-  return {};
+  return staticObj;
 }
