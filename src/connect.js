@@ -1,4 +1,4 @@
-import { Component, createElement } from 'react';
+import {Component, createElement} from 'react';
 import defaultMapStateToProps from './defaultMapStateToProps.js';
 import defaultMapDispatchToProps from './defaultMapDispatchToProps.js';
 import shallowEqual from './shallowEqual.js';
@@ -8,21 +8,23 @@ export default function connect(
   mapStateToProps = defaultMapStateToProps,
   mapDispatchToProps = defaultMapDispatchToProps
 ) {
-  return function (store, componentToConnectToStore) {
+  return function(store, componentToConnectToStore) {
     const stateMapperDependsOnProps = mapStateToProps.length > 1;
     const dispatchMapperDependsOnProps = mapDispatchToProps.length > 1;
 
     return class WrapperComponent extends Component {
       constructor(props) {
         super(props);
-        this.state = { storeState: store.getState() };
+        this.state = {storeState: store.getState()};
         this.stateProps = mapStateToProps(this.state.storeState, props);
         this.dispatchProps = mapDispatchToProps(store.dispatch, props);
-        this.firstCycle = true;
         this.storeChanged = false;
         this.propsChanged = false;
         this.propsBeforeRender = props;
-        this.renderedEle = null;
+        this.renderedEle = createElement(
+          componentToConnectToStore,
+          mergeObjs(this.stateProps, this.dispatchProps, this.props)
+        );
       }
 
       componentDidMount() {
@@ -84,15 +86,6 @@ export default function connect(
         let stateMapperChanged = false;
         let dispatchMapperChanged = false;
 
-        if (this.firstCycle) {
-          this.renderedEle = createElement(
-            componentToConnectToStore,
-            mergeObjs(this.stateProps, this.dispatchProps, this.props)
-          );
-          this.firstCycle = false;
-          return this.renderedEle;
-        }
-
         this.propsChanged = !shallowEqual(this.propsBeforeRender, this.props);
 
         if (
@@ -111,10 +104,7 @@ export default function connect(
             componentToConnectToStore,
             mergeObjs(this.stateProps, this.dispatchProps, this.props)
           );
-
-          return this.renderedEle;
         }
-
         return this.renderedEle;
       }
     };
