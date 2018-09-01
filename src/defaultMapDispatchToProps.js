@@ -1,3 +1,9 @@
+const staticObj = {};
+const DISPATCH = 'dispatch';
+
 export default function defaultMapDispatchToProps(dispatch) {
-  return { dispatch };
+  if (!staticObj[DISPATCH]) {
+    staticObj[DISPATCH] = dispatch;
+  }
+  return staticObj;
 }
