@@ -59,9 +59,12 @@ export default function connect(
         if (shallowEqual(nextStateProps, this.stateProps)) {
           return false;
         }
-
-        this.stateProps = nextStateProps;
+        this.updateStateProps(nextStateProps);
         return true;
+      }
+
+      updateStateProps(newStateProps) {
+        this.stateProps = newStateProps;
       }
 
       componentWillReceiveProps(nextProps) {
@@ -78,8 +81,12 @@ export default function connect(
           return false;
         }
 
-        this.dispatchProps = nextDispatchProps;
+        this.updateDispatchProps(nextDispatchProps);
         return true;
+      }
+
+      updateDispatchProps(newDispatchProps) {
+        this.dispatchProps = newDispatchProps;
       }
 
       render() {
