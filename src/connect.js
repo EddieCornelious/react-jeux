@@ -99,7 +99,11 @@ export default function connect(
           dispatchMapperChanged = this.shouldUpdateDispatchProps();
         }
 
-        if (this.propsHaveChanged || stateMapperChanged || dispatchMapperChanged) {
+        if (
+          this.propsHaveChanged ||
+          stateMapperChanged ||
+          dispatchMapperChanged
+        ) {
           this.renderedEle = createElement(
             componentToConnectToStore,
             mergeObjs(this.stateProps, this.dispatchProps, this.props)
