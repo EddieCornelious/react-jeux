@@ -18,8 +18,8 @@ export default function connect(
         this.state = {storeState: store.getState()};
         this.stateProps = mapStateToProps(this.state.storeState, props);
         this.dispatchProps = mapDispatchToProps(store.dispatch, props);
-        this.storeChanged = false;
-        this.propsChanged = false;
+        this.storeHasChanged = false;
+        this.propsHaveChanged = false;
         this.propsBeforeRender = props;
         this.renderedEle = createElement(
           componentToConnectToStore,
@@ -48,12 +48,12 @@ export default function connect(
       }
 
       shouldComponentUpdate(nextProps, nextState) {
-        this.storeChanged = nextState !== this.state.storeState;
+        this.storeHasChanged = nextState !== this.state.storeState;
         this.propsBeforeRender = this.props;
         return true;
       }
 
-      updateStateProps() {
+      shouldUpdateStateProps() {
         const nextStateProps = mapStateToProps(store.getState(), this.props);
 
         if (shallowEqual(nextStateProps, this.stateProps)) {
@@ -65,10 +65,10 @@ export default function connect(
       }
 
       componentWillReceiveProps(nextProps) {
-        this.propsChanged = !shallowEqual(nextProps, this.props);
+        this.propsHaveChanged = !shallowEqual(nextProps, this.props);
       }
 
-      updateDispatchProps() {
+      shouldUpdateDispatchProps() {
         const nextDispatchProps = mapDispatchToProps(
           store.dispatch,
           this.props
@@ -89,17 +89,17 @@ export default function connect(
         this.propsChanged = !shallowEqual(this.propsBeforeRender, this.props);
 
         if (
-          this.storeChanged ||
-          (this.propsChanged && stateMapperDependsOnProps)
+          this.storeHasChanged ||
+          (this.propsHaveChanged && stateMapperDependsOnProps)
         ) {
-          stateMapperChanged = this.updateStateProps();
+          stateMapperChanged = this.shouldUpdateStateProps();
         }
 
-        if (this.propsChanged && dispatchMapperDependsOnProps) {
-          dispatchMapperChanged = this.updateDispatchProps();
+        if (this.propsHaveChanged && dispatchMapperDependsOnProps) {
+          dispatchMapperChanged = this.shouldUpdateDispatchProps();
         }
 
-        if (this.propsChanged || stateMapperChanged || dispatchMapperChanged) {
+        if (this.propsHaveChanged || stateMapperChanged || dispatchMapperChanged) {
           this.renderedEle = createElement(
             componentToConnectToStore,
             mergeObjs(this.stateProps, this.dispatchProps, this.props)
