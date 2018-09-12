@@ -53,7 +53,18 @@ export default function connect(
         return true;
       }
 
-      shouldUpdateStateProps() {
+      shouldTryAndUpdateStateProps() {
+        return (
+          this.storeHasChanged ||
+          (this.propsHaveChanged && stateMapperDependsOnProps)
+        );
+      }
+
+      shouldTryAndUpdateDispatchProps() {
+        return this.propsHaveChanged && dispatchMapperDependsOnProps;
+      }
+
+      maybeUpdateStateProps() {
         const nextStateProps = mapStateToProps(store.getState(), this.props);
 
         if (shallowEqual(nextStateProps, this.stateProps)) {
@@ -71,7 +82,7 @@ export default function connect(
         this.propsHaveChanged = !shallowEqual(nextProps, this.props);
       }
 
-      shouldUpdateDispatchProps() {
+      maybeUpdateDispatchProps() {
         const nextDispatchProps = mapDispatchToProps(
           store.dispatch,
           this.props
@@ -93,17 +104,17 @@ export default function connect(
         let stateMapperChanged = false;
         let dispatchMapperChanged = false;
 
-        this.propsChanged = !shallowEqual(this.propsBeforeRender, this.props);
+        this.propsHaveChanged = !shallowEqual(
+          this.propsBeforeRender,
+          this.props
+        );
 
-        if (
-          this.storeHasChanged ||
-          (this.propsHaveChanged && stateMapperDependsOnProps)
-        ) {
-          stateMapperChanged = this.shouldUpdateStateProps();
+        if (this.shouldTryAndUpdateStateProps()) {
+          stateMapperChanged = this.maybeUpdateStateProps();
         }
 
-        if (this.propsHaveChanged && dispatchMapperDependsOnProps) {
-          dispatchMapperChanged = this.shouldUpdateDispatchProps();
+        if (this.shouldTryAndUpdateDispatchProps()) {
+          dispatchMapperChanged = this.maybeUpdateDispatchProps();
         }
 
         if (
