@@ -67,10 +67,6 @@ class App extends React.Component{
         super(props);
     }
     
-    handleAlert(){
-        this.alertUser(this.props.name);
-    }
-    
     render(){
         return (
         <div
