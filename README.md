@@ -16,12 +16,12 @@ props passed to your connected component
 This is a function that essentially lets you use Jeux's dispatch function. What is returned becomes
 props passed to your connected component
 
-### Both of the above functions also accept ownProps which are just the props you pass down to your connected component
+### Both of the functions below accept ownProps which are just the props you pass down to your connected component
 
 ```javascript
 function mapStateToProps(state, ownProps){
     return {
-        name : state.currentStatus + ownProps.id
+        name : state.name + ownProps.id
     }
 }
 
@@ -40,17 +40,17 @@ function mapDispatchToProps(dispatch, ownProps){
 
 ```javascript
 // name and looutUser and alertUser can now be accessed in your React component as a prop
-class App extends React.Component{
+class MyComponent extends React.Component{
     constuctor(props){
         super(props);
     }
     
-    handleLogout(){
+    handleAlert(){
         this.alertUser(this.props.name);
     }
     
     render(){
-        return <div onCLick ={this.handleLogout.bind(this)}> {this.props.name}</div>
+        return <div onClick ={this.handleAlert.bind(this)}> {this.props.name}</div>
     }
 }
 
@@ -59,8 +59,28 @@ class App extends React.Component{
 const store = Jeux.createStore({
     name : () => "static_name"
 })
-const connectedComponent = ReactJeux.connect(store, App)
 
+const ConnectedMyComponent = ReactJeux.connect(store, MyComponent)
+
+class App extends React.Component{
+    constuctor(props){
+        super(props);
+    }
+    
+    handleAlert(){
+        this.alertUser(this.props.name);
+    }
+    
+    render(){
+        return (
+        <div
+          <ConnectedMyComponent id = {1234}/>
+          <ConnectedMyComponent id = {12774}/>
+          <ConnectedMyComponent id = { 1 }/>
+        </div>
+        );
+    }
+}
 ```
 
 ## Play around with the example of a simple counter below
