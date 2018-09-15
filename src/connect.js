@@ -2,7 +2,7 @@ import {Component, createElement} from 'react';
 import defaultMapStateToProps from './defaultMapStateToProps.js';
 import defaultMapDispatchToProps from './defaultMapDispatchToProps.js';
 import shallowEqual from './shallowEqual.js';
-import mergeObjs from './mergeObjs.js';
+import mergeObjects from './mergeObjects.js';
 
 export default function connect(
   mapStateToProps = defaultMapStateToProps,
@@ -23,7 +23,7 @@ export default function connect(
         this.propsBeforeRender = props;
         this.renderedEle = createElement(
           componentToConnectToStore,
-          mergeObjs(this.stateProps, this.dispatchProps, this.props)
+          mergeObjects(this.stateProps, this.dispatchProps, this.props)
         );
       }
 
@@ -124,7 +124,7 @@ export default function connect(
         ) {
           this.renderedEle = createElement(
             componentToConnectToStore,
-            mergeObjs(this.stateProps, this.dispatchProps, this.props)
+            mergeObjects(this.stateProps, this.dispatchProps, this.props)
           );
         }
         return this.renderedEle;
