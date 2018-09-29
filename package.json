@@ -1,7 +1,7 @@
 {
   "name": "react-jeux",
   "version": "0.8.0",
-  "description": "React bindings for Jeux ",
+  "description": "React bindings for Jeux",
   "main": "lib/react-jeux.js",
   "scripts": {
     "build": "rimraf -rf lib .nyc_output && webpack --env dev && webpack --env build && npm run test",
