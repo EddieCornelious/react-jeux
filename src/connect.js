@@ -45,6 +45,14 @@ export default function connect(
 
       componentWillUnmount() {
         this.unsubscribe();
+        delete this.state;
+        delete this.stateProps;
+        delete this.dispatchProps;
+        delete this.storeHasChanged;
+        delete this.propsHaveChanged;
+        delete this.propsBeforeRender;
+        delete this.renderedEle;
+        delete this.unsubscribe;
       }
 
       shouldComponentUpdate(nextProps, nextState) {
