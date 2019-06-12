@@ -86,10 +86,6 @@ export default function connect(
         this.stateProps = newStateProps;
       }
 
-      componentWillReceiveProps(nextProps) {
-        this.propsHaveChanged = !shallowEqual(nextProps, this.props);
-      }
-
       maybeUpdateDispatchProps() {
         const nextDispatchProps = mapDispatchToProps(
           store.dispatch,
